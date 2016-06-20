@@ -1,0 +1,140 @@
+<#include "/WEB-INF/template/admin/header.ftl" />
+
+	
+	<!-- 板块独有内容 -->
+	<script>
+	$("#yhsc").addClass("on");
+	</script>
+	<div class="zxbody">
+		<div class="zxbody_title zxbody_title2">
+			<a href="javascript:history.back();" class="zxback">
+				<img src="${base}/static/admin/img/do_back.png">
+			</a>
+			添加内容
+		</div>
+		
+		<form id="myform" name="myform" method="post" action="json/news!edit.action">
+			<input type="hidden" value="${id!}" name="id"/>
+			<div class="zxform">
+				<table cellspacing="0" cellpadding="0" width="100%" class="zxtable">
+					<tr>
+						<td class="zxltd"><span class="must">*</span>动态标题：</td>
+						<td><input class="form_inp validate[required]" type="text" placeholder="请输入动态标题" name="title" value="${(news.title)!}"></td>
+					</tr>
+					<tr>
+						<td class="zxltd">封面图片：</td>
+						<td>
+							<table cellspacing="0" cellpadding="0" width="100%" class="form_table">
+								<tr>
+									<td class="imgtd">
+										<div class="dialog_upload">
+											<img class="editable" alt="请上传封面图片" id="avatar1" src="<#if news??&&news.pic!=null>${(news.pic)!}<#else>${base}/static/admin/img/img520.jpg</#if>" />
+											<input type="file"  id="file" name="file" class="dia_file" />
+											<input type="hidden" id="picUrl" name="picUrl" value="${(news.pic)!}" >
+										</div>
+									</td>
+									<td class="tiptd">
+										<div class="dialog_tip form_tip">
+											<h1>点击上传封面图片</h1>
+											<p>
+											建议上传图片规则:
+											<br>
+											尺寸：400*300像素
+											<br>
+											格式：jpg、jpeg、png
+											<br>
+											图片大小不超过300kb（太大网站会加载很慢）
+											</p>
+										</div>
+									</td>
+								</tr>
+							</table>
+						</td>
+					</tr>
+					<tr  class="tt-0">
+						<td class="zxltd">内容介绍：</td>
+						<td>
+							<script type="text/plain" id="mycentent" style="width:700px;height:240px;">
+							<#if news??&&news.content??>${news.content}</#if>
+							</script>
+							<textarea style="display:none" id="txt-content" name="content" >
+							<#if news??&&news.content??>${news.content}</#if>
+							</textarea>
+							<script>
+							var ue = UE.getEditor('mycentent');
+							ue.addListener('blur',function(){
+								$("#txt-content").val(ue.getContent());
+							});
+							</script>
+						</td>
+					</tr>
+					<tr>
+						<td></td>
+						<td class="btntd">
+							<button type="submit" class="dia_btn dialog_ok form_ok">确定</button>
+						</td>
+					</tr>
+					
+				</table>
+			</div>
+			<#-- 分类id -->
+			<input type="hidden" name="nodeId" id="nodeId" value="${nodeId}">
+		</form>
+	</div>
+</div>
+<script>
+	$(function(){
+	function fileuploadimg(){
+		$.ajaxFileUpload({
+				url:'${base}/upload.action',       //需要链接到服务器地址
+				secureuri:false,
+				fileElementId:'newfile',                            //文件选择框的id属性
+				dataType: 'text/html',                                   //服务器返回的格式，可以是json
+				fileSize:300,     
+				data:{width:'520', length:'250',limit:300},
+				success: function (data, textStatus) {
+					//兼容ie8以及以下版本
+					
+		        	if(data.success){		        		
+						var $html=$(
+							'<li class="file-item">'+
+							'<img class="img" width="150px" height="150px" src="'+data.bigurl+'" id="img'+i+'" />'+
+							'<input id="file'+i+'" class="fileInput" type="file" name="file" onChange="fileupdata('+i+')"  />'+
+							'<input type="hidden" id="pic'+i+'" name="pic" value="'+data.bigurl+'">'+
+							'<span class="delete">x</span>'+
+							'</li>'
+						);
+						$('#filePicker').before($html);
+
+		        	}
+		            //兼容火狐、谷歌、ie8以上版本
+					var dat = eval("("+data+")");
+					if(dat.success){
+						
+						var $html=$(
+							'<li class="file-item">'+
+							'<img class="img" src="'+dat.bigurl+'@150w_150h_2e" id="img'+i+'" />'+
+							'<input id="file'+i+'" class="fileInput" type="file" name="file" onChange="fileupdata('+i+')"  />'+
+							'<input type="hidden" id="pic'+i+'" name="pic" value="'+dat.bigurl+'"/>'+
+							'<span class="delete">x</span>'+
+							'</li>'
+						);
+						$('#filePicker').before($html);
+
+					}
+					
+					if(data.msg){
+						alert(data.msg);
+					}
+					if(dat.msg){
+						alert(dat.msg);
+					}				
+					//i++;
+				}
+		});
+	}
+
+</script>
+
+<!-- 表单提交 -->
+<#include "/WEB-INF/template/admin/myform.ftl" />

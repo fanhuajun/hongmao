@@ -1,0 +1,93 @@
+package com.wudianyi.wb.hongmao.action.admin.json;
+
+import java.util.Date;
+
+import javax.annotation.Resource;
+
+import net.sf.json.JSONObject;
+
+import com.lulu.tool.DateUtil;
+import com.wudianyi.wb.hongmao.action.BaseAction;
+import com.wudianyi.wb.hongmao.common.QueryParam;
+import com.wudianyi.wb.hongmao.entity.Comment;
+import com.wudianyi.wb.hongmao.entity.Const;
+import com.wudianyi.wb.hongmao.service.CommentService;
+
+public class CommentAction extends BaseAction{
+	
+	private String id;
+	private String reply;
+	private Integer productid;
+	
+	
+
+	@Resource
+	private CommentService commentService;
+	
+	private final static String QUERRY_FIELD = "productName";
+	
+	public String list() {
+		
+		
+		list = commentService.getStaticsLikeList(null, null, null, null, null, null, Const.BACK_PAGE_SIZE*(pn -1), Const.BACK_PAGE_SIZE, "createdate", "desc");
+		return LIST;
+	}
+	
+	public String totalNum() {
+		
+		
+		tn = commentService.getLikeTotalCount(null, null, null, null, false);
+		System.out.println("tn========" + tn);
+		return ajaxJson("{\"total\":\"" + tn + "\",\"size\":\"" + Const.BACK_PAGE_SIZE + "\"}");
+	}
+	
+	public String deleteComment() {
+		
+		Comment comment = commentService.get(id);
+		commentService.update(comment);
+		
+		return ajaxHtml("success");
+	}
+	
+	public String replyComment() {
+		Integer adminid = (Integer)getSession(Const.SESSION_ADMIN_NAME);
+		Comment comment = commentService.get(id);
+		comment.setReply(reply);
+		comment.setReplydate(new Date().getTime());
+		
+		commentService.update(comment);
+		JSONObject obj = new JSONObject();
+		obj.put("success", true);
+		obj.put("reply", reply);
+		obj.put("replydate", DateUtil.getDate(new Date(comment.getReplydate()), "yyyy/MM/dd"));
+		
+		return ajaxJson(obj.toString());
+	}
+
+	public String getId() {
+		return id;
+	}
+
+	public void setId(String id) {
+		this.id = id;
+	}
+
+	public String getReply() {
+		return reply;
+	}
+
+	public void setReply(String reply) {
+		this.reply = reply;
+	}
+	
+	public Integer getProductid() {
+		return productid;
+	}
+
+	public void setProductid(Integer productid) {
+		this.productid = productid;
+	}
+
+	
+	
+}

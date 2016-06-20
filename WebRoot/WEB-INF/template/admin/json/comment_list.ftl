@@ -1,0 +1,24 @@
+<#if list??>
+    <tr>
+        <th width="80">用户名字</th>
+        <th width="120">评论内容</th>
+        <th width="80">评分</th>
+		<th width="80">评论时间</th>
+		<th width="80">回复时间</th>
+		<th width="80">回复</th>
+		<th width="80">操作</th>
+    </tr>
+<#list list as item>
+    <tr>
+		<td>${item.username}</td>
+		<td>${item.content}</td>
+		<td>${item.star}</td>
+		<td><#if item.createdate??>${item.createdate?number_to_datetime?string("yyyy-MM-dd HH:mm:ss")}<#else>-</#if></td>
+		<td id="replydate_${item.id}"><#if item.replydate??>${item.replydate?number_to_datetime?string("yyyy-MM-dd HH:mm:ss")}<#else>-</#if></td>
+		<td id="reply_${item.id}">${item.reply!}</td>
+		<td>
+			<b data-id="${item.id}"  class="menu_do menu_edit reply_btn" title="回复"></b>
+			 <b data-id="${item.id}"  class="menu_do menu_del del_btn" title="删除"></b>
+		</td>
+	</#list>
+</#if>

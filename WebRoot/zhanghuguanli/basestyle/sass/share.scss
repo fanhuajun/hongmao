@@ -1,0 +1,55 @@
+@import "variables","functions","compass/reset";
+*{
+    box-sizing:border-box;
+}
+body{
+    font-size: $base-size !important;
+    color: $base-color;
+    background-color:$base-back;
+    font-family:$mainline-ff;
+}
+a{
+    color:$base-color;
+    text-decoration:none;
+    @include highlight();
+}
+html,body{
+	width:100%;
+	height:15rem;
+	overflow:hidden;
+}
+.box{
+	width:4rem;
+	position:relative;
+	margin-left:1.6rem;
+	margin-top:8.8rem;
+	text-align:center;
+	font-size:$ele-size13;
+
+	input{
+		width:100%;
+		height:.7rem;
+		background-color:#F3E761;
+		color:#DF3F49;
+		font-size:$ele-size13;
+		@include default-input();
+		@include radius(.1rem);
+	}
+	input::input-placeholder{text-align: center; color:#DF3F49;} 
+	input::-ms-input-placeholder{text-align: center; color:#DF3F49;}
+	input::-moz-input-placeholder{text-align: center; color:#DF3F49;} 
+	input::-o-input-placeholder{text-align: center; color:#DF3F49;} 
+	input::-webkit-input-placeholder{text-align: center; color:#DF3F49;}
+	button{
+		width:1.9rem;
+		height:.7rem;
+		margin-top:.3rem;
+		color:#DF3F49;
+		background-color:#F3E761;
+		font-size:$ele-size13;
+		@include radius(.1rem);
+		@include default-input();
+	}
+}
+
+@import "screen";

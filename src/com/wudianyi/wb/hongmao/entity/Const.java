@@ -1,0 +1,37 @@
+package com.wudianyi.wb.hongmao.entity;
+
+public class Const {
+
+	public static final String SESSION_WEIXINID = "session_weixinid";
+
+	public static final String SESSION_ADMIN_ADMIN = "session_admin_admin";
+	public static final String SESSION_SYSTEMCLASS_NAME = "session_systemClass_name";
+	public static final String SESSION_CITY_ID = "session_city_id";
+	public static final String SESSION_LONG_LAT = "session_long_lat";
+	public static final String SESSION_UP_ID = "session_up_id";
+	public static final String SESSION_USER_ID = "session_user_id";
+	public static final String SYSTEMCLASS_KEY = "systemid";
+	public static final String SESSION_ADMIN_NAME = "admin_name";
+	public static final String SESSION_ADMIN_PERMISSION = "admin_permission";
+	public static final String SESSION_ADMIN_SHOPID = "admin_shopid";
+	public static final String SESSION_ADMIN_AGENTID = "admin_agentid";
+	public static final String SESSION_SHOPID = "shopid";
+	public static final String SESSION_VESION_NAME = "version_name";
+	public static final String SESSION_WEB_ACCESSTOKEN = "web_accesstoken";
+	public static final String SESSION_WEB_ACCESSTOKEN_NOREFRESH = "web_accesstoken_norefresh";
+	public static final String SESSION_TUAN_UPID = "tuan_upid";
+	public static final String BASE_URL = "homao.me";
+	public static final int FRONT_PAGE_SIZE = 10;
+	public static final int BACK_PAGE_SIZE = 10;
+	public static String WEBINFO_ID = "1";
+	public static String STATAID_COOKE = "cookie3";
+	public static String COOKIE_LAST_LOGIN_TIME = "cookiel";
+	public static String COOKIE_CARTNUM = "cookiec";
+	public static String SESSION_WX_STAT = "session_wx_stat";
+	public static int ADDRESS_PAGE_SIZE = 10;
+	public static final String APPID = "wxf3fbbe83ff02ecf6";
+	public static final String APP_KEY = "d11d2be096a8aaf3a2dfbd608ce0f130";
+	public static final String WX_PAY_NO = "1331864001";
+	public static final String WX_PAY_SECRECT = "sda45sd465as4d56as465asc455x45a4";
+	public static final String SESSION_FRONT_SHOPID = "front_shopid";
+}
