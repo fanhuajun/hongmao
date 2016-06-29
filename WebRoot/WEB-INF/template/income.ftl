@@ -44,9 +44,9 @@ function page(){
 		data:{pn:pn},
 		success:function(html){
 			if(pn == 1){
-			$(".yfd-info tbody").html(html);
+			$(".table").html(html);
 			}else{
-			$(".yfd-info tbody").append(html);
+			$(".table").append(html);
 			}
 			pn++;	
 		}
@@ -64,16 +64,21 @@ function page(){
 		</header>
 		
 		<div class="income">
-			共收益:<span>&nbsp;&yen;${user.backmoney}</span>
+			共收益:<span>&nbsp;&yen;<#if shopvip??>#{shopvip.backmoney;m2M2}</#if></span>
 		</div>
 		<table class="yfd-info">
+		<tr>
+			<th>时间</th>
+			<th>消费金额</th>
+			<th>返佣</th>
+			<th>备注</th>
+		</tr>
+		
+		</table>
+		<table class="yfd-info table">
+		    
 			<tbody>
-				<tr>
-					<th>时间</th>
-					<th>消费金额</th>
-					<th>返佣</th>
-					<th>备注</th>
-				</tr>
+				<!--注入html-->
 			</tbody>				
 		</table>
 	</div>

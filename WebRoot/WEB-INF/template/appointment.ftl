@@ -91,7 +91,7 @@
 	          $.ajax({
 	             url:'json/appointment.action',
 	             type:'post',
-	             data:{appointdate:time,num:person_num,phone:phone,identify:identify},
+	             data:{username: "${username}",appointdate:time,num:person_num,phone:phone,identify:identify},
 	             success:function(data){
 	                 json = eval("("+data+")");
 	                 if(json.success){

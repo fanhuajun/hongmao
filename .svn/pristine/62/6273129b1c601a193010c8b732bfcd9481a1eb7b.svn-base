@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project-module
+  type="WEB"
+  name="hongmao"
+  id="myeclipse.1455516345783"
+  context-root="/hongmao"
+  j2ee-spec="5.0"
+  archive="hongmao.war">
+  <attributes>
+    <attribute name="webrootdir" value="WebRoot" />
+  </attributes>
+</project-module>
+

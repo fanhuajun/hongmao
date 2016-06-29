@@ -1,9 +1,12 @@
 package com.wudianyi.wb.hongmao.action.json;
 
+import java.util.Date;
+
 import javax.annotation.Resource;
 
 import com.wudianyi.wb.hongmao.action.BaseAction;
 import com.wudianyi.wb.hongmao.entity.Complain;
+import com.wudianyi.wb.hongmao.entity.Const;
 import com.wudianyi.wb.hongmao.service.ComplainService;
 
 public class ComplainAction extends BaseAction{
@@ -20,15 +23,17 @@ public class ComplainAction extends BaseAction{
 	 * 保存建议
 	 */
 	public String complainsave(){
+		Integer shopid = (Integer)getSession(Const.SESSION_FRONT_SHOPID);
 		Complain complain = new Complain();
 		complain.setShopid(shopid);
 		complain.setShopname(shopname);
 		complain.setUserid(userid);
 		complain.setUsername(username);
 		complain.setContent(content);
+		complain.setCreatedate(new Date().getTime()); 
 		complainService.save(complain);
 		
-		return ajaxJson("success");
+		return ajaxJsonSuccessMessage("");
 	}
 
 	

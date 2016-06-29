@@ -70,7 +70,7 @@ public class OrderAction extends BaseAction {
 
 		Shopvip shopvip = shopvipService.saveOrget(userid, shopid);
 		if (shopvip != null) {
-			setAttribute("total", shopvip.getMoney());
+			setAttribute("shopvip", shopvip);
 			String prepayjson = shopvip.getPrepayjson();
 			if (!StringUtils.isEmpty(prepayjson)) {
 				JSONArray ary = JSONArray.fromObject(prepayjson);
@@ -143,10 +143,17 @@ public class OrderAction extends BaseAction {
 
 			}
 		}
-
+		shoptotalmoney = shoptotalmoney + (shopvip.getBackmoney() - lastmoney) < 0 ? shopvip.getBackmoney():lastmoney;
+//		System.out.println("shoptotalmoney...........:"+shoptotalmoney); 
+//		System.out.println("lastmoney...........:"+lastmoney); 
+		
+		double backmoney = (shopvip.getBackmoney() - lastmoney) < 0 ? 0:shopvip.getBackmoney() - lastmoney;
+		lastmoney = lastmoney - shopvip.getBackmoney() < 0 ? 0:lastmoney - shopvip.getBackmoney();
 		// 保存用户钱包
+		shopvip.setBackmoney(backmoney);
 		shopvip.setPrepayjson(afterWallet.toString());
 		shopvip.setMoney(shopvip.getMoney() - shoptotalmoney);
+		shopvip.setShopMoney((shopvip.getShopMoney()-(dicountmoney - lastmoney))<0?0:shopvip.getShopMoney()-(dicountmoney - lastmoney));
 		shopvipService.update(shopvip);
 
 		Shop shop = shopService.get(shopid);
@@ -167,57 +174,57 @@ public class OrderAction extends BaseAction {
 		order.setNote(note);
 		// 分配佣金，总的消费金额为店预付款支付金额+微信支付的金额
 		double allmoney = shoptotalmoney + lastmoney + paymoney;
-		User oneUser=null,twoUser=null,threeUser=null;
+		Shopvip oneShopvip=null,twoShopvip=null,threeShopvip=null;
 		User user = userService.get(userid);
 		if (user.getOne() != null) {
-			oneUser = userService.get(user.getOne());
+			oneShopvip = shopvipService.saveOrget(user.getOne(), shopid);
 			order.setOneuserid(user.getOne());
-			order.setOnerank(oneUser.getRank() == null ? shop.getTotaluser()
-					: oneUser.getRank());
+			order.setOnerank(oneShopvip.getRank() == null ? shop.getTotaluser()
+					: oneShopvip.getRank());
 			// 查看排名，如果是最后一名，则直接奖励最低的那个返佣，如果第一名，奖励最高的
 			double backrate = 0.00;
-			if (oneUser.getRank() == null) {
+			if (oneShopvip.getRank() == null) {
 				backrate = shop.getLowestback1();
 			} else {
 				backrate = shop.getLowestback1()
 						+ (shop.getHighestback1() - shop.getLowestback1())
-						/ (shop.getTotaluser() - oneUser.getRank());
+						/ (shop.getTotaluser() - oneShopvip.getRank());
 			}
 			order.setOnebackmoney(backrate * allmoney);
 
 		}
 
 		if (user.getTwo() != null) {
-			twoUser = userService.get(user.getTwo());
+			twoShopvip = shopvipService.saveOrget(user.getTwo(), shopid);
 			order.setTwouserid(user.getTwo());
-			order.setTworank(twoUser.getRank() == null ? shop.getTotaluser()
-					: twoUser.getRank());
+			order.setTworank(twoShopvip.getRank() == null ? shop.getTotaluser()
+					: twoShopvip.getRank());
 			// 查看排名，如果是最后一名，则直接奖励最低的那个返佣，如果第一名，奖励最高的
 			double backrate = 0.00;
-			if (twoUser.getRank() == null) {
+			if (twoShopvip.getRank() == null) {
 				backrate = shop.getLowestback2();
 			} else {
 				backrate = shop.getLowestback2()
 						+ (shop.getHighestback2() - shop.getLowestback2())
-						/ (shop.getTotaluser() - twoUser.getRank());
+						/ (shop.getTotaluser() - twoShopvip.getRank());
 			}
 			order.setTwobackmoney(backrate * allmoney);
 		}
 		
 		
 		if (user.getThree() != null) {
-			threeUser = userService.get(user.getThree());
+			threeShopvip = shopvipService.saveOrget(user.getThree(), shopid);
 			order.setThreeuserid(user.getThree());
-			order.setThreerank(threeUser.getRank() == null ? shop.getTotaluser()
-					: threeUser.getRank());
+			order.setThreerank(threeShopvip.getRank() == null ? shop.getTotaluser()
+					: threeShopvip.getRank());
 			// 查看排名，如果是最后一名，则直接奖励最低的那个返佣，如果第一名，奖励最高的
 			double backrate = 0.00;
-			if (threeUser.getRank() == null) {
+			if (threeShopvip.getRank() == null) {
 				backrate = shop.getLowestback3();
 			} else {
 				backrate = shop.getLowestback3()
 						+ (shop.getHighestback3() - shop.getLowestback3())
-						/ (shop.getTotaluser() - threeUser.getRank());
+						/ (shop.getTotaluser() - threeShopvip.getRank());
 			}
 			order.setThreebackmoney(backrate * allmoney);
 		}
@@ -230,7 +237,37 @@ public class OrderAction extends BaseAction {
 		log.setMoney(shoptotalmoney);
 		log.setTt(-1);
 		prepaylogService.save(log);
-
+		
+        //重新计算用户的排名
+		List<Order> orderList = orderService.getList(new QueryParam().
+				     add("userid", userid).add("shopid", shopid), 0, 0, null, null, false);  
+		double conMoney = 0.00;
+		for(Order ordern : orderList){
+			conMoney += ordern.getSourcemoney();
+		}
+		shopvip.setConMoney(conMoney); 
+		shopvipService.update(shopvip);
+		List<Shopvip> shopvipList = shopvipService.getList(new QueryParam().
+				     add("shopid", shopid), 0, 0, "conMoney", "desc", false);
+		int i = 0,rank = 0,j = 0; boolean bool = false;
+		j = shopvip.getRank();
+		for(Shopvip shopvip2 : shopvipList){
+			System.out.println("userid:........."+shopvip2.getUserid()+"--"+shopvip.getConMoney()); 
+			i++;
+			if(shopvip2.getUserid().equals(userid)){
+				rank = i; bool = true;
+			}
+			if(i>=j){break;}
+			if(bool && (i < j || i<shopvipList.size())){
+				if(shopvip2.getRank()>99999998){
+					continue;
+				}	
+				shopvip2.setRank(shopvip2.getRank()+1);
+				shopvipService.update(shopvip2); 
+			}
+		}
+		shopvip.setRank(rank); 
+		
 		// 如果待付款大于0，则跳转支付页面，否则完成支付逻辑跳转支付成功页面
 		if (lastmoney + paymoney > 0) {
 			order.setStat(0);
@@ -251,14 +288,14 @@ public class OrderAction extends BaseAction {
 		
 		orderService.save(order);
 		//进行返佣
-		if(oneUser!=null){
+		if(oneShopvip!=null){
 			
-			oneUser.setBackmoney(oneUser.getBackmoney()+order.getOnebackmoney());
-			oneUser.setWdmoney(oneUser.getWdmoney()+order.getOnebackmoney());
-			userService.update(oneUser);
+			oneShopvip.setBackmoney(oneShopvip.getBackmoney()+order.getOnebackmoney());
+			//oneShopvip.setWdmoney(oneShopvip.getWdmoney()+order.getOnebackmoney());
+			shopvipService.update(oneShopvip);
 			
 			Prepaylog prepaylog = new Prepaylog();
-			prepaylog.setUserid(oneUser.getId());
+			prepaylog.setUserid(oneShopvip.getUserid());
 			prepaylog.setIsin(1);
 			prepaylog.setMoney(order.getOnebackmoney());
 			prepaylog.setTt(1);
@@ -271,12 +308,12 @@ public class OrderAction extends BaseAction {
 			
 		}
 		
-		if(twoUser!=null){
-			twoUser.setBackmoney(twoUser.getBackmoney()+order.getTwobackmoney());
-			twoUser.setWdmoney(twoUser.getWdmoney()+order.getTwobackmoney());
-			userService.update(twoUser);
+		if(twoShopvip!=null){
+			twoShopvip.setBackmoney(twoShopvip.getBackmoney()+order.getTwobackmoney());
+			//twoShopvip.setWdmoney(twoShopvip.getWdmoney()+order.getTwobackmoney());
+			shopvipService.update(twoShopvip);
 			Prepaylog prepaylog = new Prepaylog();
-			prepaylog.setUserid(twoUser.getId());
+			prepaylog.setUserid(twoShopvip.getUserid());
 			prepaylog.setIsin(1);
 			prepaylog.setMoney(order.getTwobackmoney());
 			prepaylog.setTt(1);
@@ -288,12 +325,12 @@ public class OrderAction extends BaseAction {
 			prepaylogService.save(prepaylog);
 		}
 		
-		if(threeUser!=null){
-			threeUser.setBackmoney(threeUser.getBackmoney()+order.getThreebackmoney());
-			threeUser.setWdmoney(threeUser.getWdmoney()+order.getThreebackmoney());
-			userService.update(threeUser);
+		if(threeShopvip!=null){
+			threeShopvip.setBackmoney(threeShopvip.getBackmoney()+order.getThreebackmoney());
+			//threeShopvip.setWdmoney(threeShopvip.getWdmoney()+order.getThreebackmoney());
+			shopvipService.update(threeShopvip);
 			Prepaylog prepaylog = new Prepaylog();
-			prepaylog.setUserid(threeUser.getId());
+			prepaylog.setUserid(threeShopvip.getUserid());
 			prepaylog.setIsin(1);
 			prepaylog.setMoney(order.getThreebackmoney());
 			prepaylog.setTt(1);
@@ -311,7 +348,6 @@ public class OrderAction extends BaseAction {
 	}
 
 	public String list() {
-		System.err.println(111111);
 		Integer userid = (Integer) getSession(Const.SESSION_USER_ID);
 		QueryParam param = new QueryParam(2);
 		param.add("userid", userid).add(">=stat", 1);// 该用户已支付的

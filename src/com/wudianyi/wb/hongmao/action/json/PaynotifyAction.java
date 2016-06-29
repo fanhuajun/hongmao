@@ -30,6 +30,7 @@ import com.wudianyi.wb.hongmao.service.ShopvipService;
 import com.wudianyi.wb.hongmao.service.UserService;
 import com.wudianyi.wb.hongmao.util.StringUtils;
 import com.wudianyi.wb.hongmao.util.WxPayUtil;
+import com.wudianyi.wb.hongmao.vo.PrepayVo;
 
 public class PaynotifyAction extends BaseAction {
 
@@ -172,30 +173,48 @@ public class PaynotifyAction extends BaseAction {
 			// 否则更新可用的商家余额信息
 		} else {
 
-			QueryParam params = new QueryParam(4)
-					.add("userid", prepay.getUserid())
-					.add("shopid", prepay.getShopid()).add("restmoney>", 0.0)
-					.add("tt", 0);
-			List<Prepaylog> prepayList = prepaylogService.getList(params, 0, 0,
-					"discount", "asc", false);
+//			QueryParam params = new QueryParam(4)
+//					.add("userid", prepay.getUserid())
+//					.add("shopid", prepay.getShopid()).add("restmoney>", 0.0)
+//					.add("tt", 0);
+//			List<Prepaylog> prepayList = prepaylogService.getList(params, 0, 0,
+//					"discount", "asc", false);
 			// params = new QueryParam(4).add("userid", prepay.getUserid())
 			// .add("shopid", prepay.getShopid()).add("restmoney>",
 			// 0.0).add("discount", 0.0);
 			// List<Prepaylog> noDiscountList = prepaylogService.getList(params,
 			// 0, 0, "createdate", "asc", false);
 			// prepayList.addAll(noDiscountList);
+			
+			QueryParam param = new QueryParam()
+						.add("userid", prepay.getUserid())
+						.add("shopid", prepay.getShopid());
+			String prepayjson = shopvipService.get(param, false).getPrepayjson();
+			List<PrepayVo> prepayList = JSONArray.toList(JSONArray
+					.fromObject(prepayjson),PrepayVo.class);
+			PrepayVo prepayVot = new PrepayVo();
+			prepayVot.setMoney(prepay.getRestmoney());
+			prepayVot.setId(prepay.getId());
+			prepayVot.setCreatedate(prepay.getCreatedate());
+			prepayVot.setDiscount(prepay.getDiscount());
+			prepayList.add(prepayVot);
+			
+			
+            //将更新后的prepayList保存到shopvip.Prepayjson中
 			if (prepayList.size() > 0) {
 
 				JSONArray jsonAry = new JSONArray();
 				double total = 0;
-				for (Prepaylog prepaylog : prepayList) {
+				double shopMoney = 0;
+				for (PrepayVo prepayVo : prepayList) {
 					JSONObject jsonObj = new JSONObject();
-					jsonObj.put("id", prepaylog.getId());
-					jsonObj.put("createdate", prepaylog.getCreatedate());
-					jsonObj.put("money", prepaylog.getRestmoney());
-					jsonObj.put("discount", prepaylog.getDiscount());
+					jsonObj.put("id", prepayVo.getId());
+					jsonObj.put("createdate", prepayVo.getCreatedate());
+					jsonObj.put("money", prepayVo.getMoney());
+					jsonObj.put("discount", prepayVo.getDiscount());
 					jsonAry.add(jsonObj);
-					total += prepaylog.getRestmoney();
+					total += prepayVo.getMoney();
+					shopMoney += prepayVo.getMoney()/prepayVo.getDiscount();
 				}
 				Shopvip shopvip = shopvipService.get(prepay.getUserid() + "z"
 						+ prepay.getShopid());
@@ -205,18 +224,51 @@ public class PaynotifyAction extends BaseAction {
 					shopvip.setId(prepay.getUserid() + "z" + prepay.getShopid());
 					shopvip.setUserid(prepay.getUserid());
 					shopvip.setPrepayjson(jsonAry.toString());
-					shopvip.setMoney(total);
+					shopvip.setMoney(total); 
+					shopvip.setShopMoney(shopMoney);
 					shopvip.setCreatedate(new Date().getTime());
 					shopvip.setShopid(prepay.getShopid());
 					shopvipService.save(shopvip);
 				} else {
 					shopvip.setPrepayjson(jsonAry.toString());
 					shopvip.setMoney(total);
+					shopvip.setShopMoney(shopMoney);
 					shopvipService.update(shopvip);
 				}
 			}
 		}
-
+		
+		 //重新计算用户的排名
+		Shopvip shopvip = shopvipService.saveOrget(prepay.getUserid(), prepay.getShopid());
+		List<Order> orderList = orderService.getList(new QueryParam().
+				     add("userid", prepay.getUserid()).add("shopid", prepay.getShopid()), 0, 0, null, null, false);  
+		double conMoney = 0.00;
+		for(Order ordern : orderList){
+			conMoney += ordern.getSourcemoney();
+		}
+		shopvip.setConMoney(conMoney); 
+		shopvipService.update(shopvip);
+		List<Shopvip> shopvipList = shopvipService.getList(new QueryParam().
+				     add("shopid", prepay.getShopid()), 0, 0, "conMoney", "desc", false);
+		int i = 0,rank = 0,j = 0;
+		j = shopvip.getRank(); boolean bool = false;
+		for(Shopvip shopvip2 : shopvipList){
+			System.out.println("userid:........."+shopvip2.getUserid()+"--"+shopvip.getConMoney()); 
+			i++;
+			if(shopvip2.getUserid().equals(prepay.getUserid())){
+				rank = i; bool = true;
+			}
+			if(i>=j){break;}
+			if(bool && (i < j || i<shopvipList.size())){
+				if(shopvip2.getRank()>99999998){
+					continue;
+				}	
+				shopvip2.setRank(shopvip2.getRank()+1);
+				shopvipService.update(shopvip2); 
+			}
+		}
+		shopvip.setRank(rank); 
+		shopvipService.update(shopvip);
 		getResponse()
 				.getWriter()
 				.print("<xml><return_code><![CDATA[SUCCESS]]></return_code><return_msg><![CDATA[OK]]></return_msg></xml>");

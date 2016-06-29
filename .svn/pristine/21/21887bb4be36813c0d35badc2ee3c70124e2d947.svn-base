@@ -1,0 +1,165 @@
+package com.wudianyi.wb.hongmao.common;
+
+import java.net.URLEncoder;
+import java.util.UUID;
+
+import javax.annotation.Resource;
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import org.apache.struts2.StrutsStatics;
+
+import com.opensymphony.xwork2.ActionInvocation;
+import com.opensymphony.xwork2.interceptor.AbstractInterceptor;
+import com.wudianyi.wb.hongmao.entity.Const;
+import com.wudianyi.wb.hongmao.entity.Shop;
+import com.wudianyi.wb.hongmao.service.CacheService;
+import com.wudianyi.wb.hongmao.service.ShopService;
+import com.wudianyi.wb.hongmao.service.UserService;
+import com.wudianyi.wb.hongmao.util.StringUtils;
+import com.wudianyi.wb.hongmao.util.WxMenuUtils;
+
+public class LoginVerifyInterceptor extends AbstractInterceptor {
+
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
+	@Resource
+	private CacheService cacheService;
+	@Resource
+	private UserService userService;
+	@Resource
+	private ShopService shopService;
+
+	@Override
+	public String intercept(ActionInvocation invocation) throws Exception {
+		HttpServletRequest request = (HttpServletRequest) invocation
+				.getInvocationContext().get(StrutsStatics.HTTP_REQUEST);
+		HttpServletResponse response = (HttpServletResponse) invocation
+				.getInvocationContext().get(StrutsStatics.HTTP_RESPONSE);
+		String userAgent = request.getHeader("user-agent");
+//		userAgent = "1111";
+		String code = request.getParameter("code");
+		String stat = request.getParameter("state");
+		String weixinid = null;
+		String uu = "1";// request.getParameter("uu");
+		String uid = request.getParameter("uid");
+//		 System.err.println("userAgent:"+userAgent);
+		String statusid = null;
+		// Long lastlogin = null;
+		Cookie[] cookies = request.getCookies();
+		if (cookies != null) {
+			for (Cookie c : cookies) {
+				if (c.getName().equals(Const.STATAID_COOKE)) {
+					statusid = c.getValue();
+				}
+				// if (c.getName().equals(Const.COOKIE_LAST_LOGIN_TIME)) {
+				// lastlogin = c.getValue() == null ? null : Long.parseLong(c
+				// .getValue());
+				// }
+
+			}
+		}
+
+		if (statusid == null) {
+			statusid = UUID.randomUUID().toString();
+			request.setAttribute(Const.STATAID_COOKE, statusid);
+			// 保存cookie
+			Cookie cookie = new Cookie(Const.STATAID_COOKE, statusid);
+			cookie.setPath("/");
+			// cookie.setDomain(Const.BASE_WEB_SITE);
+			cookie.setMaxAge(3600 * 24 * 2);
+			response.addCookie(cookie);
+		}
+		if (uid == null) {
+			uid = (String) cacheService.get(CacheService.CACHE_SESSION
+					+ statusid + "_" + Const.SESSION_UP_ID);
+		} else {
+			cacheService.set(CacheService.CACHE_SESSION + statusid + "_"
+					+ Const.SESSION_UP_ID, uid + "",
+					CacheService.CACHE_SESSION_TIME);
+		}
+
+		// 保存cookie完毕
+
+		Object shopidObj = cacheService.get(CacheService.CACHE_SESSION
+				+ statusid + "_" + Const.SESSION_FRONT_SHOPID);
+		if (shopidObj == null || !shopidObj.toString().equals(uu)) {
+			cacheService.set(CacheService.CACHE_SESSION + statusid + "_"
+					+ Const.SESSION_FRONT_SHOPID, Integer.parseInt(uu),
+					CacheService.CACHE_SESSION_TIME);
+		}
+
+		Object weixinidObj = cacheService.get(CacheService.CACHE_SESSION
+				+ statusid + "_" + Const.SESSION_WEIXINID);
+		if (weixinidObj != null) {
+			weixinid = weixinidObj.toString();
+		}
+
+		if (userAgent != null && userAgent.indexOf("MicroMessenger") > 0) {// 是微信浏览器
+			if (!StringUtils.isEmpty(code)) {
+				Object statObj = cacheService.get(CacheService.CACHE_SESSION
+						+ statusid + "_" + Const.SESSION_WX_STAT);
+				if (statObj != null) {// 判断这个code是不是用过了
+					String sessionstat = statObj.toString();
+					if (sessionstat.equals(stat)) {
+						cacheService.remove(CacheService.CACHE_SESSION
+								+ statusid + "_" + Const.SESSION_WX_STAT);
+						Shop shop = shopService.get(Integer.parseInt(uu));
+						if (!StringUtils.isEmpty(shop.getAppid())
+								&& !StringUtils.isEmpty(shop.getAppKey())) {
+							weixinid = WxMenuUtils.getOpenidByCode(
+									shop.getAppid(), shop.getAppKey(), code);
+							if (!StringUtils.isEmpty(weixinid)) {
+								Integer userid = userService.saveOrUpdateUser(
+										weixinid, uid,uu);
+								cacheService.set(CacheService.CACHE_SESSION
+										+ statusid + "_"
+										+ Const.SESSION_USER_ID, userid,
+										CacheService.CACHE_SESSION_TIME);
+								cacheService.set(CacheService.CACHE_SESSION
+										+ statusid + "_"
+										+ Const.SESSION_WEIXINID, weixinid,
+										CacheService.CACHE_SESSION_TIME);
+							}
+						}
+					}
+				}
+			}
+		}
+
+		System.err.println(userAgent);
+		// 如果没有用户的微信id
+		if (userAgent.indexOf("MicroMessenger") > 0) {
+			if (weixinid == null) {
+				Shop shop = shopService.get(Integer.parseInt(uu));
+				if (!StringUtils.isEmpty(shop.getAppid())) {
+					int rd = (int) (Math.random() * 99999);
+
+					// 把stat放进session，使用过后就不要了
+					cacheService.set(CacheService.CACHE_SESSION + statusid
+							+ "_" + Const.SESSION_WX_STAT, rd, 60 * 3);
+
+					System.err.println("http://" + uu + ".homao.me"
+							+ request.getRequestURI().toString());
+					response.sendRedirect("https://open.weixin.qq.com/connect/oauth2/authorize?appid="
+							+ shop.getAppid()
+							+ "&redirect_uri="
+							+ URLEncoder.encode("http://" + uu + ".homao.me"
+									+ request.getRequestURI().toString(),
+									"UTF-8")
+//							+URLEncoder.encode("http://192.168.1.242:8082/shop.action","UTF-8")
+							+ "&response_type=code&scope=snsapi_base&state="
+							+ rd + "#wechat_redirect");
+					return null;
+				}
+			}
+
+		}
+
+		return invocation.invoke();
+	}
+}

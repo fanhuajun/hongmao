@@ -263,12 +263,12 @@ a.btn_no{background:url(${base}/static/admin/img/btn_no.png) no-repeat;}
 						<li id="ktsh">开通商户</li>
 					</a>
 					</#if>
-					<!--<#if isadmin==1>
-					<a href="comment!list.action">
-						<li id="comment">投诉建议</li>
+					<#if isadmin==0>
+					<a href="complain!list.action">
+						<li id="complain">投诉建议</li>
 					</a>
-					</#if>-->
-					<#if isadmin==1>
+					</#if>
+					<#if isadmin==0>
 					<a href="deposit!list.action">
 						<li id="deposit">提现审核</li>
 					</a>
@@ -277,7 +277,6 @@ a.btn_no{background:url(${base}/static/admin/img/btn_no.png) no-repeat;}
 					<a href="rebate!list.action">
 						<li id="rebate">返佣明细</li>
 					</a>
-					
 					<#if isadmin==0>
 					<a href="recharge.action">
 						<li id="dpcz">返佣充值</li>

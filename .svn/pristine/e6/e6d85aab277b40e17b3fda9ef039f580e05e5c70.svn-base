@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>帐号添加</title>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+	<!-- 避免IE使用兼容模式，IE 运行最新的渲染模式,用 Chrome 框架的页面用webkit 内核-->
+	<meta name="renderer" content="webkit">
+	<!-- 启用360浏览器的极速模式(webkit) -->
+	<meta content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no" id="viewport" name="viewport">
+	<!-- 初始化移动浏览显示,移动端必须使用 -->
+	<meta name="format-detection" content="telephone=no" />
+	<meta name="apple-mobile-web-app-capable" content="yes">
+	<meta name="apple-mobile-web-app-status-bar-style" content="black">
+	
+	<link rel="stylesheet" type="text/css" href="../fonts/iconfont.css">
+	<link rel="stylesheet" type="text/css" href="../basestyle/stylesheets/model.css">
+	<link rel="stylesheet" type="text/css" href="../basestyle/stylesheets/merchant.css">
+</head>
+<body class="Tnav">
+	<header class="default-head">
+		<a href="#" class="head-left"><i class="iconfont icon-xiangzuo2">&nbsp;&nbsp;</i></a>
+		<div class="head-tit">帐号添加</div>
+		<a href="#" class="head-right"></a>
+	</header>
+
+	<div class="content">
+		<div class="zhtj-b1">
+			<div class="zhtj-userimg">
+				<div class="img-update">
+					<i class="iconfont icon-plus"></i>
+					<input type="file">
+					<img src="../images/2000.jpg" alt="">
+				</div>
+			</div>
+			<ul class="zhtj-b2">
+				<li>
+					<label>选择职位</label>
+					<select class="ipt">
+						<option value="1">dddd</option>
+						<option value="1">dddd</option>
+						<option value="1">dddd</option>
+						<option value="1">dddd</option>
+					</select>
+					<i class="iconfont icon-11">
+						
+					</i>
+				</li>
+				<li>
+					<label>登陆帐号</label>
+					<input type="text" class="ipt">
+				</li>
+				<li>
+					<label>登陆密码</label>
+					<input type="text" class="ipt">
+				</li>
+				<li>
+					<label>名字</label>
+					<input type="text" class="ipt">
+				</li>
+				<li>
+					<label>工号</label>
+					<input type="text" class="ipt">
+				</li>
+				<li>
+					<label>连接打印机</label>
+					<div class="box">
+						<div class="rad">
+							<input type="radio" name="dyj" checked="checked">
+							<i class="iconfont icon-dui3"></i>连接
+						</div>
+						<div class="rad">
+							<input type="radio" name="dyj">
+							<i class="iconfont icon-dui3"></i>不连接
+						</div>
+					</div>
+				</li>
+			</ul>
+		</div>
+
+		<div class="block-box" style="height:100%;overflow:hidden;">
+			<div class="zhtj-qxbox">
+				<label>权限</label>
+				<div class="zhtj-qxcont">
+					<div class="qx-box">
+						【用户查看】【用户查看】【用户查看】【用户查看】【用户查看】【用户查看】【用户查看】
+					</div>
+					<a href="#" class="qx-setbtn">设置权限</a>
+				</div>
+			</div>
+		</div>
+		<div class="m-ctgl-popbox" style="overflow:auto">
+			<div class="m-ctgl-poparea">
+				<h3>选择菜系<a href="javascript:;" class="close-ctgl-cx"><i class="iconfont icon-guanbi4"></i></a></h3>
+				
+				<div class="qx-listarea">
+					<div class="qx-listbox">
+						<p class="qx-l-tit">用户管理</p>
+						<ul>
+							<li><input type="checkbox" name="qx1"><span>用户管理</span></li>
+							<li><input type="checkbox" name="qx1"><span>用户管理</span></li>
+							<li><input type="checkbox" name="qx1"><span>用户管理</span></li>
+							<li><input type="checkbox" name="qx1"><span>用户管理</span></li>
+						</ul>
+					</div>
+					<div class="qx-listbox">
+						<p class="qx-l-tit">用户管理</p>
+						<ul>
+							<li><input type="checkbox" name="qx2"><span>用户管理</span></li>
+							<li><input type="checkbox" name="qx2"><span>用户管理</span></li>
+							<li><input type="checkbox" name="qx2"><span>用户管理</span></li>
+							<li><input type="checkbox" name="qx2"><span>用户管理</span></li>
+						</ul>
+					</div>
+					<div class="qx-listbox">
+						<p class="qx-l-tit">其他</p>
+						<ul>
+							<li><input type="checkbox" name="qx3"><span>用户管理</span></li>
+							<li><input type="checkbox" name="qx3"><span>用户管理</span></li>
+							<li><input type="checkbox" name="qx3"><span>用户管理</span></li>
+							<li><input type="checkbox" name="qx3"><span>用户管理</span></li>
+						</ul>
+					</div>
+					<div class="qx-listbox">
+						<p class="qx-l-tit">其他</p>
+						<ul>
+							<li><input type="checkbox" name="qx3"><span>用户管理</span></li>
+							<li><input type="checkbox" name="qx3"><span>用户管理</span></li>
+							<li><input type="checkbox" name="qx3"><span>用户管理</span></li>
+							<li><input type="checkbox" name="qx3"><span>用户管理</span></li>
+						</ul>
+					</div>
+					<div class="qx-listbox">
+						<p class="qx-l-tit">其他</p>
+						<ul>
+							<li><input type="checkbox" name="qx3"><span>用户管理</span></li>
+							<li><input type="checkbox" name="qx3"><span>用户管理</span></li>
+							<li><input type="checkbox" name="qx3"><span>用户管理</span></li>
+							<li><input type="checkbox" name="qx3"><span>用户管理</span></li>
+						</ul>
+					</div>
+					<div class="qx-listbox">
+						<p class="qx-l-tit">其他</p>
+						<ul>
+							<li><input type="checkbox" name="qx3"><span>用户管理</span></li>
+							<li><input type="checkbox" name="qx3"><span>用户管理</span></li>
+							<li><input type="checkbox" name="qx3"><span>用户管理</span></li>
+							<li><input type="checkbox" name="qx3"><span>用户管理</span></li>
+						</ul>
+					</div>
+					
+				<div class="qx-listbox">
+						<p class="qx-l-tit">其他</p>
+						<ul>
+							<li><input type="checkbox" name="qx3"><span>用户管理</span></li>
+							<li><input type="checkbox" name="qx3"><span>用户管理</span></li>
+							<li><input type="checkbox" name="qx3"><span>用户管理</span></li>
+							<li><input type="checkbox" name="qx3"><span>用户管理</span></li>
+						</ul>
+					</div>
+				</div>				
+				<div class="ctgl-btnbox qx-btnbox">
+					<a href="#">确认</a>
+				</div>
+			</div>
+		</div>
+
+		<div class='default-btn'>
+			<a href="">登陆</a>
+		</div>
+	</div>
+	
+	<div class="pop"></div>
+	<script type="text/javascript" src="../js/jquery-1.8.2.min.js"></script>
+	<script type="text/javascript">
+		$(function(){
+			$('.qx-setbtn').click(function(){
+				$('.pop').addClass('pop-visible');
+				$('.m-ctgl-popbox').addClass('ctgl-popbox-show');
+			})
+			$('.close-ctgl-cx').click(function(){
+				$('.pop').removeClass('pop-visible');
+				$('.m-ctgl-popbox').removeClass('ctgl-popbox-show');
+			});
+		})
+	</script>
+</body>
+</html>

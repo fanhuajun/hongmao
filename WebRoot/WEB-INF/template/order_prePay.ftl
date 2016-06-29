@@ -60,10 +60,11 @@
 		<dl class="yhd-2">
 			<!--<dd>红猫钱包 <span>剩余&nbsp;&yen;${user.money}</span></dd>-->
 			<dd>
-				<p>预付款<span>剩余&nbsp;&yen;${total!0}</span></p>
+				<p>预付款<span>充<span>&yen;#{shopvip.money!0.0;m2M2}(抵￥#{shopvip.shopMoney!0.0;m2M2}+#{(shopvip.backmoney)!;m2M2})</span></p>
+				<p class="p2 prepay" data-id="0" data-money="${(shopvip.backmoney)!}" data-discount="1">返佣金额<span>#{(shopvip.backmoney)!;m2M2}</span></p>
 				<#if list?? && list?size gt 0>
 				<#list list as prePay>
-				<p class="p2 prepay" data-id="${prePay.id}" data-money="${prePay.money}" data-discount="${prePay.discount}">${prePay.createdate?number_to_datetime?string("yyyy-MM-dd")}充值享${prePay.discount*10}折<span>剩余&nbsp;&yen;${prePay.money}</span></p>
+				<p class="p2 prepay" data-id="${prePay.id}" data-money="${prePay.money}" data-discount="${prePay.discount}">${prePay.createdate?number_to_datetime?string("yyyy-MM-dd")}充值享${prePay.discount*10}折<span>充￥#{prePay.money;m2M2}(抵￥#{prePay.money/prePay.discount;m2M2})</span></p>
 				</#list>
 				</#if>
 			</dd>
@@ -89,10 +90,10 @@
 					$('.bcytext').css({'background-color':'#fff'}).find('input').removeAttr('disabled');
 				}else{
 					$('.bcytext').css({'background-color':'#ebebe4'}).find('input').attr('disabled','disabled').val("");
+				    changeData();
 				}
 			})
-			
-			$(document).on('blur','input',function(){
+			function changeData(){
 				var total = 0;
 				var webPrepay = parseFloat("${user.money!0}");
 				
@@ -113,7 +114,8 @@
 				var consumeList = [];
 				var shopmoney = 0;
 				var webmoney = 0;
-				$('.p2').each(function(){
+				$('.prepay').each(function(){
+				
 					var money = parseFloat($(this).attr('data-money'));
 					var discount = parseFloat($(this).attr('data-discount'));
 					var id = $(this).attr('data-id');
@@ -161,6 +163,10 @@
 				$('#webmoney').val(webmoney);
 				$('#confirmBtn').html('&yen;' + realPayShow + '&nbsp;确认订单');
 				$('#consumeJson').val(JSON.stringify(consumeList));
+			}
+			
+			$(document).on('input','input',function(){
+			    changeData();
 			});
 			
 			

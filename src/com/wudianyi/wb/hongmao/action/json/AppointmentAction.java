@@ -17,6 +17,7 @@ public class AppointmentAction extends BaseAction {
 	   private String num;
 	   private String phone;
 	   private int tt;
+	   private String username;
 	   private String identify;
 	   
 	   @Resource
@@ -34,6 +35,7 @@ public class AppointmentAction extends BaseAction {
     		   appointment.setNum(num);
     		   appointment.setPhone(phone);
     		   appointment.setShopid(shopid);
+    		   appointment.setUsername(username);
     		   appointmentService.save(appointment);
     		    return ajaxJson("{\"success\":true}");
     	   }
@@ -101,5 +103,13 @@ public class AppointmentAction extends BaseAction {
 
 	public void setAppointdate(String appointdate) {
 		this.appointdate = appointdate;
+	}
+
+	public String getUsername() {
+		return username;
+	}
+
+	public void setUsername(String username) {
+		this.username = username;
 	}
 }

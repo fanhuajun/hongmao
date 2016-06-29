@@ -40,11 +40,13 @@ public class DepositAction extends BaseAction {
 
 		double limit = 0.0;
 		Integer userid = (Integer) getSession(Const.SESSION_USER_ID);
+		Integer shopid = (Integer) getSession(Const.SESSION_FRONT_SHOPID);
+		Shopvip shopvip = shopvipService.saveOrget(userid, shopid);
 		User user = userService.get(userid);
 		String encryptPhone = user.getPhone().replace(
 				user.getPhone().subSequence(3, 7), "****");
 
-		limit = user.getBackmoney();
+		limit = shopvip.getBackmoney();
 		setAttribute("limit", limit);
 		setAttribute("phone", user.getPhone());
 		setAttribute("encryptPhone", encryptPhone);

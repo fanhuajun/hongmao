@@ -1,0 +1,43 @@
+package com.wudianyi.wb.hongmao.action;
+
+import java.util.List;
+
+import javax.annotation.Resource;
+
+import com.wudianyi.wb.hongmao.common.QueryParam;
+import com.wudianyi.wb.hongmao.entity.Const;
+import com.wudianyi.wb.hongmao.entity.Shopcontent;
+import com.wudianyi.wb.hongmao.service.ShopcontentService;
+
+
+
+public class ShopcontentAction extends BaseAction {
+	private int shopcategoryid=2;
+	
+    @Resource
+    private ShopcontentService shopcontentService;
+    
+
+	public String recommend(){
+    	//临时数据
+    	setSession(Const.SESSION_SHOPID, 19);
+    	
+    	QueryParam param = new QueryParam();
+    	param.add("shopid", getSession(Const.SESSION_SHOPID)).add("shopcategory.id", shopcategoryid)
+    	.add("toindex", 1);
+    	List<Shopcontent> list = shopcontentService.getList(param, 0, 0, "orderbyid", "asc", false);
+    	String shopcategoryname = list.get(1).getShopcategory().getName();
+    	setAttribute("shopcategoryname", shopcategoryname);
+    	setAttribute("list", list);
+    	return "recommend";
+    }
+	
+	
+	 public int getShopcategoryid() {
+			return shopcategoryid;
+		}
+
+	 public void setShopcategoryid(int shopcategoryid) {
+			this.shopcategoryid = shopcategoryid;
+		}
+}

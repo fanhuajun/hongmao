@@ -39,17 +39,9 @@
 	  left: 0;
 	  z-index: 105;
 	}
-	#shareit img {
-	  max-width: 100%;
-	}
-	.arrow {
-	  position: absolute;
-	  right: 10%;
-	  top: 5%;
-	}
-	#share-text {
-	  margin-top: 400px;
-	}
+	#shareit img { max-width: 100%;}
+	.arrow {position: absolute;right: 10%; top: 5%;}
+	#share-text { margin-top: 400px;}
 	
 	.wxewm-box {
 	    width: 56%;
@@ -62,8 +54,9 @@
 	    height: 3.5rem;
 	}
 	.k-img img {
-    height: 3.5rem;
-}
+    //height: 4rem;
+    height: auto;
+	}
 hr {
     border-style: inset;
     border-width: 1px;
@@ -112,7 +105,7 @@ hr {
 	//$(".confirm").bind("click",function(){
 		//title = $(".fltxt").val();
 		wx.onMenuShareTimeline({
-			title : "这个地方不错哦，朋友快来吧。", // 分享标题
+			title : "这个地方不错哦，朋友快来吧fan。", // 分享标题
 			link : url, // 分享链接
 			imgUrl : "${shop.cover}", // 分享图标
 			success : function() {
@@ -188,13 +181,18 @@ function fileupload(){
 					<hr>
 					<!--<p class="spd-i-b">
 						<span class="sp1">${shop.cuisine}</span>
-					</p>-->
+					</p>-->	
 					<p class="spd-i-a"><span>最新分享返佣&nbsp;:&nbsp;</span>
 					<br>一级${shop.lowestback1*100}%~${shop.highestback1*100}%,  <br>二级${shop.lowestback2*100}%~${shop.highestback2*100}%, <br>三级${shop.lowestback3*100}%~${shop.highestback3*100}%
 					</p>
 					<div style="padding-top:8px">
 					<p class="spd-i-a"><span>我的充值折扣&nbsp;:&nbsp;</span><#if (!shop.discount??)>无折扣<#else>${shop.discount*10}折</#if></p>
-					<p class="spd-i-a"><span>我的消费排名&nbsp;:&nbsp;<#if user??>${(user.rank)!}<#else><a href="login.action">登录</a></#if></span></p>
+					<p class="spd-i-a"><span>我的消费排名&nbsp;:&nbsp;<#if shopvip??>
+						                                                    <#if shopvip.rank gt 99999998>无排名
+						                                                     <#else>${(shopvip.rank)!}
+						                                                     </#if>
+					                                                  <#else><a href="#">无排名</a>
+					                                                  </#if></span></p>
 					</div>
 					<p class="spd-wxewm" data-src="images/2000.jpg">
 						<i class="iconfont icon-code"></i>
@@ -209,7 +207,7 @@ function fileupload(){
 					<a class="spd-i-lb" href="tel:${shop.phone}"><i class="iconfont icon-buchongiconsvg09"></i>&nbsp;&nbsp;${shop.phone}</a>
 				</dd>
 				<dd>
-					<a class="spd-i-lb-2" href="javascript:void(0);"><i class="iconfont icon-location i-1"></i><p>${shop.address}</p><i class="iconfont icon-xiangyou iright i-2"></i></a>
+					<a class="spd-i-lb-2" href="javascript:void(0);"><i class="iconfont icon-location i-1"></i><p>${shop.address}</p></a>
 				</dd>
 				<dd>
 					<div class="spd-i-lb" href="#">上班时间&nbsp;:&nbsp;${shop.thetime!}</div>
@@ -281,7 +279,7 @@ function fileupload(){
 					<#if contents??>
 					<#list contents as content>
 					<div onclick="javascript:location.href='shop!shopcontent.action?contentid=${content.id}'">
-						<h3 class="sp-kdjtit">&nbsp&nbsp&nbsp&nbsp${content.title}</h3>
+						<h3 class="sp-kdjtit sp-k-labl">&nbsp&nbsp&nbsp&nbsp${content.title}<i style="margin-right: .2rem;" class="iconfont icon-xiangyou ilablright"></i></h3>
 						<div class="k-img pdkimg">
 							<img src="${content.pic}" />
 					    </div>
@@ -326,7 +324,7 @@ function fileupload(){
 						<a href="comment!list.action?id=${shop.id}" class="more-pl">查看&nbsp;${commentTotal}&nbsp;条评论 <i class="iconfont icon-xiangyou"></i></a>
 					</dl>
 				</div>
-				<div class="tab" id="tab2">
+			<!--	<div class="tab" id="tab2">
 					<dl class="pjbox">
 						<dd>
 							<div class="pj-userinfo-box">
@@ -350,6 +348,7 @@ function fileupload(){
 							</div>
 						</dd>
 						<a href="share!list.action?id=${shop.id}" class="more-pl">查看全部&nbsp;${shop.sharecount}&nbsp;条分享 <i class="iconfont icon-xiangyou"></i></a>
+					-->
 					</dl>
 				</div>
 			</div>

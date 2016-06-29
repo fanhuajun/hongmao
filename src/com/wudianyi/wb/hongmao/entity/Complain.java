@@ -30,6 +30,7 @@ public class Complain implements Serializable {
 	private int backid;//反馈填写人id
 	private String backname;//反馈填写人名称
 	private String feedback;//反馈内容
+	private Long createdate;//创建时间
 
 	@Id
 	@GeneratedValue
@@ -103,6 +104,14 @@ public class Complain implements Serializable {
 
 	public void setFeedback(String feedback) {
 		this.feedback = feedback;
+	}
+
+	public Long getCreatedate() {
+		return createdate;
+	}
+
+	public void setCreatedate(Long createdate) {
+		this.createdate = createdate;
 	}
 
 }

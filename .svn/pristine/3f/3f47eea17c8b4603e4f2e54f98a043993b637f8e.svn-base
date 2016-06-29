@@ -1,0 +1,13 @@
+   <#if list??&&(list?size gt 0)>
+		<#list list as dh>
+				<li class="slevel_link">
+					    <span class="link2" data-id="${dh.id}">${dh.title!}</span>
+						<a href="shopcontent!edit.action?thisId=${dh.id}&addOrEdit='edit2'" class="menu_do menu_edit slevel_edit" title="编辑" data-name="${dh.title!}" data-id="${dh.id}" ></a>
+						<b class="menu_do menu_del slevel_del" title="删除" data-id="${dh.id}" ></b>
+				</li>
+		</#list>
+	    <li class="slevel_li slevel_add" data-id="${slevel_id}">
+                                添加文章
+	   </li>
+		 </#if>
+  

@@ -27,7 +27,7 @@
 <body class="center-padd">
 	<div class="content">
 		<header class="default-head">
-			<a href="javascript:history.go(-1)" class="head-left"><i class="iconfont icon-xiangzuo"></i></a>
+			<a href="javascript:location.href='shop.action'" class="head-left"><i class="iconfont icon-xiangzuo"></i></a>
 			<div class="head-tit">我的</div>
 			<a href="#" class="head-right"><i class="iconfont icon-gengduo"></i></a>
 		</header>
@@ -41,7 +41,7 @@
 				<h3 class="usr-name"><#if user.name??>${user.name}<#else>红猫用户${user.id}</#if></h3>
 			</a>
 				<div class="ct-1">
-					钱包&nbsp;:&nbsp;&yen;&nbsp;<#if user.money??>${user.money}<#else>0.00</#if>&nbsp;&nbsp;<a href="recharge.action">充值</a>
+					可提现金额&nbsp;:&nbsp;&yen;&nbsp;<#if shopvip??>#{shopvip.backmoney;m2M2}<#else>0.00</#if>&nbsp;&nbsp;<a style="text-decoration: none" href="recharge.action">充值</a>
 				</div>
 			</div>
 		</div>
@@ -83,7 +83,7 @@
 			</li>
 		-->
 			<li>
-				<a href="${base}/prepaylog!list.action">
+				<a href="${base}/prepaylog!detail.action">
 					<i class="iconfont icon-dayin1 iconlist"></i>
 					<div class="list-cont">我的预付<i class='iconfont icon-xiangyou'></i></div>
 				</a>
